@@ -30,10 +30,8 @@ class CandidateController extends Controller
 
             $data = $validator->validate();
             if ($data['cv_file']) {
-                $file = $request->file('cv_file');
-                $fileName = time().'_'.$file->getClientOriginalName();
-                $file->move(public_path('cv'), $fileName);
-                $data['cv_file'] = 'cv/'.$fileName;
+                $cvPath = $request->file('cv_file')->store('cvs', 'public');
+                $data['cv_file'] = $cvPath;
             }
             Candidate::create($data);
             return success('Application created successfully.');

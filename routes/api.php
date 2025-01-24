@@ -39,4 +39,3 @@ Route::post('/enterprises',[EnterpriseController::class,'store']);
 Route::post('/candidates',[CandidateController::class,'store']);
 Route::post('/contacts',[ContactController::class,'store']);
 
-

@@ -48,6 +48,11 @@ class CandidateResource extends Resource
                 Tables\Columns\TextColumn::make('email')->label('Email')->searchable(),
                 Tables\Columns\TextColumn::make('phone')->label('Phone')->searchable(),
                 Tables\Columns\TextColumn::make('category.name')->label('Category'),
+                Tables\Columns\TextColumn::make('cv_file')
+                ->label('CV')
+                ->url(fn($record) => asset('files/' . $record->cv_file)) // Make the link clickable
+                ->openUrlInNewTab()
+                ->default('No CV Uploaded'),
                 Tables\Columns\TextColumn::make('description')->label('Description')->limit(50),
                 Tables\Columns\TextColumn::make('status')->label('Status'),
                 Tables\Columns\TextColumn::make('created_at')->label('Created At')->dateTime(),

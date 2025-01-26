@@ -32,7 +32,7 @@ class CategoryResource extends Resource
                     ->maxLength(255)
                     ->nullable(),
                 Forms\Components\Select::make('type')
-                    ->options(['candidates' => 'Candidates','businesses' => 'businesses'])->required(),
+                    ->options(['candidates' => 'Candidates','enterprises' => 'Enterprises'])->required(),
             ]);
     }
 

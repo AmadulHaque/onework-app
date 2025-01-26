@@ -30,7 +30,7 @@ Route::controller(AuthController::class)->group(function () {
 
 Route::controller(ChatController::class)->middleware('auth:sanctum')->group(function () {
     Route::get('/messages', 'index');
-    Route::post('/messages', 'store');
+    Route::post('/message-store', 'store');
 });
 
 

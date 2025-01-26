@@ -15,6 +15,17 @@ class CategoryController extends Controller
                     $query->where('type',$request->type);
                 })
                 ->get();
+        if ($request->type == 'candidates') {
+            $categories->push([
+                'id' => 0,
+                'name' => 'What area are you interested in? '
+            ]);
+        }else{
+            $categories->push([
+                'id' => 0,
+                'name' => 'What type of contract are you interested in? '
+            ]);
+        }
         return success('Fetched Categories Successfully',$categories);
     }
 }

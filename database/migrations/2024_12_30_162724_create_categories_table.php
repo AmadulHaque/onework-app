@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::create('categories', function (Blueprint $table) {
             $table->id();
-            $table->enum('type', ['candidates','businesses'])->default('candidates');
+            $table->enum('type', ['candidates','enterprises'])->default('candidates');
             $table->string('name')->unique();
             $table->string('slug')->unique();
             $table->timestamps();

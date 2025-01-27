@@ -28,9 +28,9 @@ Route::controller(AuthController::class)->group(function () {
 
 
 
-Route::controller(ChatController::class)->middleware('auth:sanctum')->group(function () {
-    Route::get('/messages', 'index');
-    Route::post('/message-store', 'store');
+Route::middleware('auth:sanctum')->group(function () {
+    Route::get('/messages', [ChatController::class,'index']);
+    Route::post('/msg-store',[ChatController::class,'store']);
 });
 
 

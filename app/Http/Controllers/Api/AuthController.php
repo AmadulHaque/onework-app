@@ -7,6 +7,7 @@ use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Validator;
 
 class AuthController extends Controller
@@ -150,4 +151,46 @@ class AuthController extends Controller
         return success('User logged out successfully.');
 
     }
+
+    public function otpSend(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'email' => 'required|email|exists:users,email',
+        ]);
+
+        if ($validator->fails()) {
+            return validationError('Validation failed.', $validator->errors());
+        }
+
+
+        // send otp this email
+        $user = User::where('email', $request->email)->first();
+        $otp = rand(10000, 99999);
+        Mail::to($user->email)->send(new \App\Mail\OtpMail($otp));
+        $user->update(['opt_code' => $otp]);
+
+        return success('OTP sent successfully.');
+
+    }
+
+
+    public function forgetPassword(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'otp' => 'required|exists:users,opt_code',
+            'new_password' => 'required|min:8',
+            'confirm_password' => 'required|min:8|same:new_password',
+        ]);
+        if ($validator->fails()) {
+            return validationError('Validation failed.', $validator->errors());
+        }
+        $user = User::where('opt_code', $request->otp)->first();
+        $user->opt_code = null;
+        $user->password = Hash::make($request->password);
+        $user->save();
+        return success('Password changed successfully.');
+    }
+
+
+
 }

@@ -16,6 +16,7 @@ return new class extends Migration
             $table->foreignId('sender_id')->constrained('users');
             $table->foreignId('receiver_id')->constrained('users');
             $table->text('message');
+            $table->string('file')->nullable();
             $table->boolean('is_seen')->default(false);
             $table->boolean('is_admin')->default(false);
             $table->timestamps();

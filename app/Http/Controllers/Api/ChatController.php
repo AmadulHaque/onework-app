@@ -30,6 +30,7 @@ class ChatController extends Controller
 
         $validator = Validator::make($request->all(), [
             'message'      => 'required|string|min:2|max:255',
+            'file' => 'nullable|file|mimes:jpg,jpeg,png,gif,mp4,avi,doc,docx,pdf|max:20480',
         ]);
 
         // Check if validation fails
@@ -38,11 +39,18 @@ class ChatController extends Controller
         }
         $userId = $request->user()->id;
 
+        $fileName = null;
+        if ($request->hasFile('file')) {
+            $fileName = '/files/' . $request->file('file')->store('chats', 'public');
+        }
+
+
         $adminId = User::where('role', 'admin')->first()->id;
         $chat = Chat::create([
             'sender_id' =>$userId,
             'receiver_id' => $adminId,
             'message' => $request->message,
+            'file' => $fileName,
             'is_admin'=> false,
         ]);
 
@@ -69,6 +77,7 @@ class ChatController extends Controller
                     ];
                 });
 
+        $chat['is_file'] = $fileName ? true : false;
         $pusher->trigger('chatChannel.'.$userId, 'chatEvent', $chat);
         $pusher->trigger('chatChannel.admin123', 'chatEvent', $users);
 

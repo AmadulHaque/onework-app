@@ -99,15 +99,23 @@
         </div>
 
         @if (!$receiverId)
-            <h2 class="text-center text-xl font-semibold text-black">Please select a user to chat with</h2>
+            <h2 class="text-center text-xl font-semibold text-black dark:text-gray-800">Please select a user to chat with</h2>
         @else
             <div id="chat-messages" class="h-96 overflow-y-auto border-b border-gray-300 mb-4 p-4">
                 <!-- Dynamic Messages Will Appear Here -->
             </div>
 
-            <form id="chat-form" class="flex mt-4">
-                <input type="text" name="message" id="chat-input" class="flex-grow border rounded-lg p-2" placeholder="Type your message..." />
-                <button type="submit" class="ml-2 px-4 py-2 bg-blue-600 text-white rounded-lg">Send</button>
+            <form id="chat-form" class="flex mt-4" enctype="multipart/form-data">
+                @csrf
+                <input type="hidden" name="is_admin" id="" value="1">
+                <input type="hidden" name="receiver_id" id="" value="{{ $receiverId }}">
+                <div class="fi-input-wrp-input min-w-0 flex-1">
+                    <input type="file" name="file" id="file" class="flex-grow border rounded-lg p-2 mr-2 " />
+                </div>
+                <input type="text" name="message" id="chat-input" class="flex-grow border rounded-lg p-2 mr-2" style="margin-right: 3px;" placeholder="Type your message..." />
+                <x-filament::button  type="submit" class="ml-2 px-4 py-2 bg-blue-600 text-white rounded-lg">
+                    Send
+                </x-filament::button>
             </form>
         @endif
     </div>
@@ -133,7 +141,7 @@
                 chatMessages.html('');
                 response.forEach(chat => {
                     const side = chat.is_admin ? 'right' : 'left';
-                    appendMessage(side, chat.message, chat.sender_id !== '{{ auth()->user()->id }}' ? '{{ asset('avatars/profile.png') }}' : null);
+                    appendMessage(side, chat.message, chat.sender_id !== '{{ auth()->user()->id }}' ? '{{ asset('avatars/profile.png') }}' : null,chat.file);
                 });
                 chatMessages.scrollTop(chatMessages.prop('scrollHeight'));
             },
@@ -144,16 +152,23 @@
     }
 
     // Append message to the chat UI
-    function appendMessage(side, message, avatar = null) {
+    function appendMessage(side, message, avatar = null, file = null) {
+
         const chatMessages = $('#chat-messages');
         const messageHtml = side === 'right' ? `
+            ${file ? `<div class="message-right mt-2">
+               <img class="" style="width: 80px; height: 80px;" src="${file}" alt="File">
+            </div>` : ''}
             <div class="message-right">
-                <div class="chat-message chat-message-right">${message}</div>
+                <div class="chat-message chat-message-right dark:text-gray-800">${message}</div>
             </div>
         ` : `
+            ${file ? `<div class="message-left mt-2">
+               <img class="" style="width: 80px; height: 80px;" src="${file}" alt="File">
+            </div>` : ''}
             <div class="message-left">
                 <img class="rounded-full w-10 h-10" src="${avatar}" alt="Avatar">
-                <div class="chat-message">${message}</div>
+                <div class="chat-message dark:text-gray-800">${message}</div>
             </div>
         `;
         chatMessages.append(messageHtml);
@@ -162,21 +177,24 @@
     // Handle sending a message
     $('#chat-form').on('submit', function (e) {
         e.preventDefault();
-        const input = $('#chat-input');
-        const message = input.val().trim();
+
+        const formData = new FormData(this);
+        const message = $('#chat-input').val().trim();
+
         if (message) {
             $.ajax({
                 url: '{{ route("messages.store") }}',
                 type: 'POST',
-                data: {
-                    message: message,
-                    receiver_id: receiverId,
-                    is_admin:true,
-                    _token: '{{ csrf_token() }}'
-                },
-                success: function () {
-                    appendMessage('right', message);
-                    input.val('');
+                data: formData,
+                processData: false,  // Prevent jQuery from processing the data
+                contentType: false,  // Prevent jQuery from setting the content type
+                success: function (response) {
+                    // console.log(response);
+
+                    appendMessage('right', message, '', response.file);
+                    // Reset form fields
+                    $('#chat-input').val('');
+                    $('#file').val('');
                 },
                 error: function (error) {
                     console.error('Message sending failed:', error);
@@ -185,12 +203,13 @@
         }
     });
 
+
     // Initialize Pusher for real-time updates
     const pusher = new Pusher('ad012c372ed42153296c', { cluster: 'ap2' });
     const channel = pusher.subscribe(`chatChannel.${receiverId}`);
     channel.bind('chatEvent', function (chat) {
        if (!chat.is_admin) {
-           appendMessage('left', chat.message, '{{ asset('avatars/profile.png') }}');
+           appendMessage('left', chat.message,'{{ asset('avatars/profile.png') }}',chat.file);
        }
     });
 

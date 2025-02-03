@@ -186,7 +186,7 @@ class AuthController extends Controller
         }
         $user = User::where('opt_code', $request->otp)->first();
         $user->opt_code = null;
-        $user->password = Hash::make($request->password);
+        $user->password = Hash::make($request->new_password);
         $user->save();
         return success('Password changed successfully.');
     }

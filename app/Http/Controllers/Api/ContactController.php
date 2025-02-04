@@ -15,7 +15,7 @@ class ContactController extends Controller
             'name'  => 'required|string|max:45',
             'email' => 'required|email|max:255',
             'phone' => 'required|string|max:255',
-            'message'=> 'required|string',
+            'message'=> 'nullable|string',
         ]);
 
         // Check if validation fails

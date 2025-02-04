@@ -30,7 +30,7 @@ class ChatController extends Controller
 
         $rules = [
             'message' => 'nullable|string|min:2|max:255',
-            'file' => 'nullable|file|mimes:jpg,jpeg,png,gif,mp4,avi,doc,docx,pdf|max:20480',
+            'file' => 'nullable|file|mimes:jpg,jpeg,png,webp|max:20480',
         ];
 
         //  implement message or file not empty validation

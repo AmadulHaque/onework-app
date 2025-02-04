@@ -157,18 +157,19 @@
         const chatMessages = $('#chat-messages');
         const messageHtml = side === 'right' ? `
             ${file ? `<div class="message-right mt-2">
-               <img class="" style="width: 80px; height: 80px;" src="${file}" alt="File">
+               <img class="" style="width: 80px; height: 80px;margin-right: 50px;border-radius: 7px;" src="${file}" alt="File">
             </div>` : ''}
-            <div class="message-right">
+            ${message ? `<div class="message-right">
                 <div class="chat-message chat-message-right dark:text-gray-800">${message}</div>
-            </div>
+            </div>` : ''}
+
         ` : `
             ${file ? `<div class="message-left mt-2">
-               <img class="" style="width: 80px; height: 80px;" src="${file}" alt="File">
+               <img class="" style="width: 80px; height: 80px;margin-left: 50px;border-radius: 7px;" src="${file}" alt="File">
             </div>` : ''}
             <div class="message-left">
                 <img class="rounded-full w-10 h-10" src="${avatar}" alt="Avatar">
-                <div class="chat-message dark:text-gray-800">${message}</div>
+                ${message ? `<div class="chat-message dark:text-gray-800">${message}</div>` : ''}
             </div>
         `;
         chatMessages.append(messageHtml);
@@ -181,7 +182,7 @@
         const formData = new FormData(this);
         const message = $('#chat-input').val().trim();
 
-        if (message) {
+        if (message || formData.get('file') && formData.get('file').name) {
             $.ajax({
                 url: '{{ route("messages.store") }}',
                 type: 'POST',
@@ -189,14 +190,14 @@
                 processData: false,  // Prevent jQuery from processing the data
                 contentType: false,  // Prevent jQuery from setting the content type
                 success: function (response) {
-                    // console.log(response);
-
                     appendMessage('right', message, '', response.file);
                     // Reset form fields
                     $('#chat-input').val('');
                     $('#file').val('');
                 },
                 error: function (error) {
+                    console.log(error);
+
                     console.error('Message sending failed:', error);
                 }
             });

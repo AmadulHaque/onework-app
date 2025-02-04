@@ -21,6 +21,11 @@ class CandidateResource extends Resource
 
     protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
 
+    public static function getNavigationLabel(): string
+    {
+        return 'Candidates applies';
+    }
+
     public static function form(Form $form): Form
     {
         return $form
@@ -32,7 +37,7 @@ class CandidateResource extends Resource
                       'pending' => 'Pending',
                       'approved' => 'Approved',
                       'rejected' => 'Rejected',
-                      'interview' => 'Interview'
+                      'reviewed' => 'Reviewed'
                     ])
                     ->default('pending'),
             ]);
@@ -43,6 +48,8 @@ class CandidateResource extends Resource
         return $table
             ->query(Candidate::query()->latest('created_at'))
             ->columns([
+                Tables\Columns\TextColumn::make('id')->label('ID'),
+                Tables\Columns\TextColumn::make('status')->label('Status'),
                 Tables\Columns\TextColumn::make('name')->label('Name')->sortable()->searchable(),
                 Tables\Columns\TextColumn::make('first_name')->label('First Name'),
                 Tables\Columns\TextColumn::make('email')->label('Email')->searchable(),
@@ -54,7 +61,6 @@ class CandidateResource extends Resource
                 ->openUrlInNewTab()
                 ->default('No CV Uploaded'),
                 Tables\Columns\TextColumn::make('description')->label('Description')->limit(50),
-                Tables\Columns\TextColumn::make('status')->label('Status'),
                 Tables\Columns\TextColumn::make('created_at')->label('Created At')->dateTime(),
 
             ])
@@ -83,10 +89,10 @@ class CandidateResource extends Resource
                 Tables\Filters\SelectFilter::make('status')
                     ->label('Status')
                     ->options([
-                        'pending' => 'Pending',
+                        'pending'  => 'Pending',
                         'approved' => 'Approved',
                         'rejected' => 'Rejected',
-                        'interview' => 'Interview'
+                        'reviewed' => 'Reviewed'
                     ]),
             ])
 

@@ -21,6 +21,10 @@ class EnterpriseResource extends Resource
 
     protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
 
+    public static function getNavigationLabel(): string
+    {
+        return 'Enterprise applies';
+    }
     public static function form(Form $form): Form
     {
         return $form
@@ -31,6 +35,7 @@ class EnterpriseResource extends Resource
                  'pending'  => 'Pending',
                  'active'   => 'Active',
                  'rejected' => 'Rejected',
+                 'reviewed' => 'Reviewed'
                 ])
                 ->default('pending'),
         ]);
@@ -42,12 +47,12 @@ class EnterpriseResource extends Resource
             ->query(Enterprise::query()->latest('created_at'))
             ->columns([
                 Tables\Columns\TextColumn::make('company_name')->label('Company Name')->sortable()->searchable(),
+                Tables\Columns\TextColumn::make('status')->label('Status'),
                 Tables\Columns\TextColumn::make('name')->label('Name')->searchable(),
                 Tables\Columns\TextColumn::make('email')->label('Email')->searchable(),
                 Tables\Columns\TextColumn::make('phone')->label('Phone'),
                 Tables\Columns\TextColumn::make('category.name')->label('Category'),
                 Tables\Columns\TextColumn::make('description')->label('Description')->limit(50),
-                Tables\Columns\TextColumn::make('status')->label('Status'),
                 Tables\Columns\TextColumn::make('created_at')->label('Created At')->dateTime(),
             ])
             ->filters([
@@ -81,6 +86,7 @@ class EnterpriseResource extends Resource
                         'pending' => 'Pending',
                         'active' => 'Active',
                         'rejected' => 'Rejected',
+                        'reviewed' => 'Reviewed',
                     ]),
             ])
             ->actions([

@@ -44,6 +44,7 @@ class ChatController extends Controller
             return validationError('Validation failed.', $validator->errors());
         }
 
+
         try {
             $fileName = null;
             if ($request->hasFile('file')) {

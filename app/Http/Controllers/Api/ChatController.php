@@ -28,10 +28,18 @@ class ChatController extends Controller
     public function store(Request $request)
     {
 
-        $validator = Validator::make($request->all(), [
-            'message'      => 'required|string|min:2|max:255',
+        $rules = [
+            'message' => 'nullable|string|min:2|max:255',
             'file' => 'nullable|file|mimes:jpg,jpeg,png,gif,mp4,avi,doc,docx,pdf|max:20480',
-        ]);
+        ];
+
+        //  implement message or file not empty validation
+        if (empty($request->message) && empty($request->file)) {
+            $rules['message'] = 'required';
+            $rules['file'] = 'required';
+        }
+
+        $validator = Validator::make($request->all(), $rules);
 
         // Check if validation fails
         if ($validator->fails()) {

@@ -19,6 +19,8 @@ class ChatController extends Controller
                 'id' => $message->id,
                 'message' => $message->message,
                 'created_at' => $message->created_at,
+                 'is_file' => $message->file ? true : false,
+                 'file' => $message->file,
                 'type' => $message->is_admin ? 'admin' : 'user',
             ];
         });

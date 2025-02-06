@@ -20,6 +20,7 @@ return new class extends Migration
             $table->unsignedBigInteger('category_id');
             $table->string('description');
             $table->enum('status', ['pending', 'active','rejected'])->default('pending');
+            $table->integer('is_seen')->default(0);
             $table->timestamps();
 
             $table->foreign('category_id')

@@ -21,6 +21,11 @@ class EnterpriseResource extends Resource
 
     protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
 
+    public static function getNavigationBadge(): ?string
+    {
+        return (string) Enterprise::where('is_seen', '0')->count();
+    }
+
     public static function getNavigationLabel(): string
     {
         return 'Enterprise applies';
@@ -46,7 +51,9 @@ class EnterpriseResource extends Resource
         return $table
             ->query(Enterprise::query()->latest('created_at'))
             ->columns([
-                Tables\Columns\TextColumn::make('company_name')->label('Company Name')->sortable()->searchable(),
+                Tables\Columns\TextColumn::make('company_name')->label('Company Name')->sortable()->searchable()
+                ->color(fn ($record) => $record->is_seen ? 'black' : 'danger'),
+
                 Tables\Columns\TextColumn::make('status')->label('Status'),
                 Tables\Columns\TextColumn::make('name')->label('Name')->searchable(),
                 Tables\Columns\TextColumn::make('email')->label('Email')->searchable(),

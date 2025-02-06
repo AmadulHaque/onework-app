@@ -20,6 +20,7 @@ return new class extends Migration
             $table->unsignedBigInteger('category_id');
             $table->string('description');
             $table->string('cv_file');
+            $table->integer('is_seen')->default(0);
             $table->enum('status', ['pending', 'approved', 'rejected', 'interview'])->default('pending');
             $table->timestamps();
 

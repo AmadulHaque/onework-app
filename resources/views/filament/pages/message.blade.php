@@ -112,7 +112,7 @@
                 <div class="fi-input-wrp-input min-w-0 flex-1">
                     <input type="file" name="file" id="file" class="flex-grow border rounded-lg p-2 mr-2 dark:text-gray-800" style="width: 341px;"/>
                 </div>
-                <input type="text" name="message" id="chat-input" class="flex-grow border rounded-lg p-2 mr-2" style="margin-right: 3px;" placeholder="Type your message..." />
+                <input type="text" name="message" id="chat-input" class="flex-grow border rounded-lg p-2 mr-2 dark:text-gray-800" style="margin-right: 3px;" placeholder="Type your message..." />
                 <x-filament::button  type="submit" class="ml-2 px-4 py-2 bg-blue-600 text-white rounded-lg">
                     Send
                 </x-filament::button>

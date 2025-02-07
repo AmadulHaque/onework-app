@@ -57,6 +57,7 @@ class ChatController extends Controller
                 'message' => $request->message,
                 'file' => $fileName,
                 'is_admin' => $request->is_admin ? true : false,
+                'is_seen' => '1',
             ]);
 
             $options = [

@@ -120,13 +120,13 @@
         @endif
     </div>
 </x-filament::page>
-
 @push('scripts')
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js" crossorigin="anonymous"></script>
 <script src="https://js.pusher.com/8.2.0/pusher.min.js"></script>
 
 <script>
     const receiverId = '{{ $receiverId }}';
+    const notificationSound = new Audio('{{ asset("sounds/1.wav") }}');
 
     // Fetch existing chat messages
     function fetchMessages() {
@@ -157,7 +157,7 @@
         const chatMessages = $('#chat-messages');
         const messageHtml = side === 'right' ? `
             ${file ? `<div class="message-right mt-2">
-               <img class="" style="width: 80px; height: 80px;margin-right: 50px;border-radius: 7px;" src="${file}" alt="File">
+               <a href="${file}" target="_blank"><img class="" style="width: 80px; height: 80px;margin-right: 50px;border-radius: 7px;" src="${file}" alt="File"></a>
             </div>` : ''}
             ${message ? `<div class="message-right">
                 <div class="chat-message chat-message-right dark:text-gray-800">${message}</div>
@@ -165,7 +165,7 @@
 
         ` : `
             ${file ? `<div class="message-left mt-2">
-               <img class="" style="width: 80px; height: 80px;margin-left: 50px;border-radius: 7px;" src="${file}" alt="File">
+               <a href="${file}" target="_blank"><img class="" style="width: 80px; height: 80px;margin-left: 50px;border-radius: 7px;" src="${file}" alt="File"></a>
             </div>` : ''}
             <div class="message-left">
                 <img class="rounded-full w-10 h-10" src="${avatar}" alt="Avatar">
@@ -173,8 +173,13 @@
             </div>
         `;
         chatMessages.append(messageHtml);
+        scrollToBottom();
     }
 
+    function scrollToBottom() {
+        const chatMessages = $('#chat-messages');
+        chatMessages.scrollTop(chatMessages.prop('scrollHeight'));
+    }
     // Handle sending a message
     $('#chat-form').on('submit', function (e) {
         e.preventDefault();
@@ -191,6 +196,8 @@
                 contentType: false,  // Prevent jQuery from setting the content type
                 success: function (response) {
                     appendMessage('right', message, '', response.file);
+                    scrollToBottom();
+
                     // Reset form fields
                     $('#chat-input').val('');
                     $('#file').val('');
@@ -204,13 +211,14 @@
         }
     });
 
-
     // Initialize Pusher for real-time updates
     const pusher = new Pusher('ad012c372ed42153296c', { cluster: 'ap2' });
     const channel = pusher.subscribe(`chatChannel.${receiverId}`);
     channel.bind('chatEvent', function (chat) {
        if (!chat.is_admin) {
            appendMessage('left', chat.message,'{{ asset('avatars/profile.png') }}',chat.file);
+           notificationSound.play();
+           scrollToBottom();
        }
     });
 

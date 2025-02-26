@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Validator;
@@ -191,6 +192,12 @@ class AuthController extends Controller
         return success('Password changed successfully.');
     }
 
-
+    public function accountDelete(Request $request)
+    {
+        $user = Auth::user();
+        DB::table('chats')->whereAny(['sender_id','receiver_id'], $user->id)->delete();
+        $user->delete();
+        return success('Account deleted successfully.', $user);
+    }
 
 }

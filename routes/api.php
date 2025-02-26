@@ -23,6 +23,7 @@ Route::controller(AuthController::class)->group(function () {
     Route::post('/logout', 'logout');
     Route::get('/user', 'user')->middleware('auth:sanctum');
     Route::post('/user/update', 'userUpdate')->middleware('auth:sanctum');
+    Route::post('/account/delete', 'accountDelete')->middleware('auth:sanctum');
 
     // forget password
     Route::post('/otp-send','otpSend');
